@@ -1,0 +1,28 @@
+image: mcr.microsoft.com/dotnet/sdk:6.0  # Use the .NET SDK 6.0 image
+
+pipelines:
+  branches:
+    stage:  # Pipeline configuration for the 'stage' branch
+      - step:
+          name: Build and Test
+          caches:
+            - dotnetcore
+          script:
+            - dotnet restore
+            - dotnet build --configuration Release
+            - dotnet test --no-build --verbosity normal
+    master:  # Pipeline configuration for the 'master' branch
+      - step:
+          name: Build and Test
+          caches:
+            - dotnetcore
+          script:
+            - dotnet restore
+            - dotnet build --configuration Release
+            - dotnet test --no-build --verbosity normal
+      - step:
+          name: Deploy to Production
+          deployment: production
+          script:
+            - dotnet publish -c Release -o ./publish
+            # Add deployment steps here, such as deploying to a server or container
